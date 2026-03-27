@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urgency & Importance Matrix</title>
+    <title>Dynamic Task Matrix</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -24,201 +24,103 @@
             transition: all 0.3s ease;
         }
 
-        .container {
-            max-width: 800px;
-            margin: auto;
-        }
+        .container { max-width: 800px; margin: auto; }
 
-        /* Header & Language Toggle */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
         }
         
-        h1 {
-            font-size: 1.5em;
-            color: var(--primary);
-            margin: 0;
-        }
+        h1 { font-size: 1.5em; color: var(--primary); margin: 0; }
 
         .lang-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--primary); color: white; border: none;
+            padding: 8px 15px; border-radius: 20px; font-weight: bold;
+            cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Input Form */
         .form-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
+            background: var(--card-bg); padding: 20px; border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 25px;
         }
 
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--primary);
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px; /* Prevents iPhone zoom on input */
-        }
-
-        /* Sliders */
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        input[type="range"] {
-            flex: 1;
-            accent-color: var(--blue);
-        }
-
-        .value-badge {
-            background: var(--blue);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            min-width: 25px;
-            text-align: center;
-        }
-
-        /* Scale Note */
-        .scale-note {
-            background: #eaf2f8;
-            border-left: 4px solid var(--blue);
-            padding: 10px 15px;
-            font-size: 0.85em;
-            color: #555;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--primary); }
         
-        body[dir="rtl"] .scale-note {
-            border-left: none;
-            border-right: 4px solid var(--blue);
+        input[type="text"], input[type="date"] {
+            width: 100%; padding: 12px; border: 1px solid #ddd;
+            border-radius: 8px; box-sizing: border-box; font-size: 16px;
         }
 
-        /* Add Button */
+        .slider-container { display: flex; align-items: center; gap: 15px; }
+        input[type="range"] { flex: 1; accent-color: var(--blue); }
+        .value-badge {
+            background: var(--blue); color: white; padding: 4px 12px;
+            border-radius: 12px; font-weight: bold; min-width: 25px; text-align: center;
+        }
+
+        .scale-note {
+            background: #eaf2f8; border-left: 4px solid var(--blue);
+            padding: 10px 15px; font-size: 0.85em; color: #555;
+            border-radius: 4px; margin-bottom: 15px; line-height: 1.4;
+        }
+        body[dir="rtl"] .scale-note { border-left: none; border-right: 4px solid var(--blue); }
+
         .add-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--blue);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
+            width: 100%; padding: 12px; background-color: var(--blue); color: white;
+            border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold;
+            cursor: pointer; transition: background 0.3s;
         }
-
         .add-btn:active { background-color: #2980b9; }
 
-        /* Matrix Grid */
-        .matrix {
-            display: grid;
-            grid-template-columns: 1fr; /* Single column for iPhone */
-            gap: 15px;
-        }
-
-        @media (min-width: 600px) {
-            .matrix { grid-template-columns: 1fr 1fr; }
-        }
+        .matrix { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 600px) { .matrix { grid-template-columns: 1fr 1fr; } }
 
         .quadrant {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            min-height: 150px;
+            background: var(--card-bg); padding: 15px; border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); min-height: 150px;
         }
-
-        .quadrant h2 {
-            font-size: 1.1em;
-            margin-top: 0;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
+        .quadrant h2 { font-size: 1.1em; margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #eee; }
 
         #q1 { border-top: 5px solid var(--red); }
         #q2 { border-top: 5px solid var(--blue); }
         #q3 { border-top: 5px solid var(--orange); }
         #q4 { border-top: 5px solid var(--gray); }
 
-        /* Task Items */
         .task-item {
-            background: #f9f9f9;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #eee;
+            background: #f9f9f9; padding: 12px; margin-bottom: 10px;
+            border-radius: 8px; display: flex; justify-content: space-between;
+            align-items: center; border: 1px solid #eee;
         }
-
-        .task-details {
-            display: flex;
-            flex-direction: column;
-            width: 85%;
+        .task-details { display: flex; flex-direction: column; width: 75%; }
+        .task-name { font-weight: bold; margin-bottom: 5px; word-wrap: break-word; }
+        .task-weight { font-size: 0.75em; color: #777; }
+        .urgency-badge { font-weight: bold; padding: 2px 0px; border-radius: 4px; font-size: 0.9em;}
+        
+        .action-btns { display: flex; gap: 10px; }
+        .icon-btn {
+            background: none; border: none; font-size: 1.3em;
+            cursor: pointer; padding: 5px; border-radius: 4px;
         }
-
-        .task-weight {
-            font-size: 0.75em;
-            color: #777;
-            margin-top: 5px;
-        }
-
-        .delete-btn {
-            background: none;
-            color: var(--red);
-            border: none;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 5px;
-        }
+        .cal-btn { color: var(--blue); }
+        .del-btn { color: var(--red); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div class="header">
-            <h1 id="appTitle">Task Matrix</h1>
+            <h1 id="appTitle">Dynamic Matrix</h1>
             <button class="lang-btn" onclick="toggleLanguage()">عربي</button>
         </div>
         
         <div class="form-card">
             <div class="input-group">
                 <label id="lblTask" for="taskName">Task Description</label>
-                <input type="text" id="taskName" placeholder="E.g., Finalize load factor management protocol...">
+                <input type="text" id="taskName" placeholder="E.g., Prepare training presentation...">
             </div>
 
             <div class="input-group">
-                <label id="lblImp">Importance</label>
+                <label id="lblImp">Importance (1-10)</label>
                 <div class="slider-container">
                     <input type="range" id="importance" min="1" max="10" value="5" oninput="updateValue('impValue', this.value)">
                     <span class="value-badge" id="impValue">5</span>
@@ -226,15 +128,12 @@
             </div>
 
             <div class="input-group">
-                <label id="lblUrg">Urgency</label>
-                <div class="slider-container">
-                    <input type="range" id="urgency" min="1" max="10" value="5" oninput="updateValue('urgValue', this.value)">
-                    <span class="value-badge" id="urgValue">5</span>
-                </div>
+                <label id="lblDate">Due Date (Auto-calculates Urgency)</label>
+                <input type="date" id="dueDate">
             </div>
 
             <div class="scale-note" id="scaleNote">
-                💡 <strong>Scale Note:</strong> 1 = Very Low, 10 = Very High. <br>A score of 6 or above pushes the task into the higher priority quadrants.
+                💡 <strong>Dynamic Urgency:</strong> Urgency is calculated automatically based on the due date.<br>Tasks shift to urgent as the deadline approaches!
             </div>
 
             <button class="add-btn" id="btnAdd" onclick="addTask()">Add Task</button>
@@ -261,125 +160,187 @@
     </div>
 
     <script>
-        // Dictionary for translations
         const translations = {
             en: {
-                appTitle: "Task Matrix",
-                lblTask: "Task Description",
-                placeholder: "E.g., Finalize load factor management protocol...",
-                lblImp: "Importance",
-                lblUrg: "Urgency",
-                scaleNote: "💡 <strong>Scale Note:</strong> 1 = Very Low, 10 = Very High. <br>A score of 6 or above pushes the task into the higher priority quadrants.",
-                btnAdd: "Add Task",
-                titleQ1: "Do First (Urgent & Important)",
-                titleQ2: "Schedule (Important, Not Urgent)",
-                titleQ3: "Delegate (Urgent, Not Important)",
-                titleQ4: "Eliminate (Neither)",
-                langBtn: "عربي",
-                alertText: "Please enter a task description.",
-                impText: "Importance",
-                urgText: "Urgency"
+                appTitle: "Task Matrix", lblTask: "Task Description", placeholder: "E.g., Prepare training presentation...",
+                lblImp: "Importance (1-10)", lblDate: "Due Date",
+                scaleNote: "💡 <strong>Dynamic Urgency:</strong> Urgency is calculated automatically based on the due date.<br>Tasks shift to urgent as the deadline approaches!",
+                btnAdd: "Add Task", titleQ1: "Do First (Urgent & Important)", titleQ2: "Schedule (Important, Not Urgent)",
+                titleQ3: "Delegate (Urgent, Not Important)", titleQ4: "Eliminate (Neither)", langBtn: "عربي",
+                alertText: "Please enter a task description and select a due date.", impText: "Importance", daysLeftText: "Days Left",
+                todayText: "Today!", overdueText: "Overdue!"
             },
             ar: {
-                appTitle: "مصفوفة المهام",
-                lblTask: "وصف المهمة",
-                placeholder: "مثال: إعداد العرض التدريبي للمعدات الكهربائية...",
-                lblImp: "الأهمية",
-                lblUrg: "الاستعجال",
-                scaleNote: "💡 <strong>ملاحظة التقييم:</strong> 1 = منخفض جداً، 10 = عالي جداً. <br>أي تقييم 6 فما فوق ينقل المهمة لمربعات الأولوية العالية.",
-                btnAdd: "إضافة المهمة",
-                titleQ1: "نفّذ فوراً (هام وعاجل)",
-                titleQ2: "جدولها (هام، غير عاجل)",
-                titleQ3: "فوّضها (عاجل، غير هام)",
-                titleQ4: "تجاهلها (غير هام وغير عاجل)",
-                langBtn: "English",
-                alertText: "الرجاء إدخال وصف المهمة أولاً.",
-                impText: "الأهمية",
-                urgText: "الاستعجال"
+                appTitle: "مصفوفة المهام", lblTask: "وصف المهمة", placeholder: "مثال: إعداد العرض التدريبي للمعدات...",
+                lblImp: "الأهمية (1-10)", lblDate: "تاريخ الاستحقاق",
+                scaleNote: "💡 <strong>الاستعجال الديناميكي:</strong> يتم حساب الاستعجال تلقائياً بناءً على التاريخ.<br>المهام تنتقل لمربع عاجل كلما اقترب الموعد!",
+                btnAdd: "إضافة المهمة", titleQ1: "نفّذ فوراً (هام وعاجل)", titleQ2: "جدولها (هام، غير عاجل)",
+                titleQ3: "فوّضها (عاجل، غير هام)", titleQ4: "تجاهلها (غير هام وغير عاجل)", langBtn: "English",
+                alertText: "الرجاء إدخال وصف المهمة واختيار تاريخ الاستحقاق.", impText: "الأهمية", daysLeftText: "أيام متبقية",
+                todayText: "اليوم!", overdueText: "متأخرة!"
             }
         };
 
         let currentLang = 'en';
+        let tasks = JSON.parse(localStorage.getItem('matrixTasks')) || [];
+
+        // تعيين تاريخ اليوم كافتراضي
+        document.getElementById('dueDate').valueAsDate = new Date();
 
         function toggleLanguage() {
             currentLang = currentLang === 'en' ? 'ar' : 'en';
-            
-            // Set Document Direction
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
             document.documentElement.lang = currentLang;
 
-            // Update UI Texts
             document.getElementById('appTitle').innerText = translations[currentLang].appTitle;
             document.getElementById('lblTask').innerText = translations[currentLang].lblTask;
             document.getElementById('taskName').placeholder = translations[currentLang].placeholder;
             document.getElementById('lblImp').innerText = translations[currentLang].lblImp;
-            document.getElementById('lblUrg').innerText = translations[currentLang].lblUrg;
+            document.getElementById('lblDate').innerText = translations[currentLang].lblDate;
             document.getElementById('scaleNote').innerHTML = translations[currentLang].scaleNote;
             document.getElementById('btnAdd').innerText = translations[currentLang].btnAdd;
             document.getElementById('titleQ1').innerText = translations[currentLang].titleQ1;
             document.getElementById('titleQ2').innerText = translations[currentLang].titleQ2;
             document.getElementById('titleQ3').innerText = translations[currentLang].titleQ3;
             document.getElementById('titleQ4').innerText = translations[currentLang].titleQ4;
-            
-            // Update button text
             document.querySelector('.lang-btn').innerText = translations[currentLang].langBtn;
+            
+            renderTasks();
         }
 
-        function updateValue(id, val) {
-            document.getElementById(id).innerText = val;
+        function updateValue(id, val) { document.getElementById(id).innerText = val; }
+
+        function calculateUrgency(dueDateString) {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const dueDate = new Date(dueDateString);
+            dueDate.setHours(0,0,0,0);
+            
+            const diffDays = Math.round((dueDate - today) / (1000 * 60 * 60 * 24)); 
+            
+            let urgencyScore = 1;
+            if (diffDays <= 1) urgencyScore = 10;      // اليوم أو متأخرة
+            else if (diffDays <= 3) urgencyScore = 8;  // خلال 3 أيام
+            else if (diffDays <= 7) urgencyScore = 6;  // خلال أسبوع (الحد الفاصل للاستعجال)
+            else if (diffDays <= 14) urgencyScore = 4; // خلال أسبوعين
+            else urgencyScore = 2;                     // أكثر من أسبوعين
+
+            return { score: urgencyScore, daysLeft: diffDays };
         }
 
         function addTask() {
             const name = document.getElementById('taskName').value;
             const importance = parseInt(document.getElementById('importance').value);
-            const urgency = parseInt(document.getElementById('urgency').value);
+            const dateStr = document.getElementById('dueDate').value;
 
-            if (!name) {
+            if (!name || !dateStr) {
                 alert(translations[currentLang].alertText);
                 return;
             }
 
-            let targetDiv = '';
-            if (importance >= 6 && urgency >= 6) {
-                targetDiv = 'tasks-q1';
-            } else if (importance >= 6 && urgency < 6) {
-                targetDiv = 'tasks-q2';
-            } else if (importance < 6 && urgency >= 6) {
-                targetDiv = 'tasks-q3';
-            } else {
-                targetDiv = 'tasks-q4';
-            }
+            const newTask = {
+                id: 'task-' + Date.now(),
+                name: name,
+                importance: importance,
+                dueDate: dateStr
+            };
 
-            const taskEl = document.createElement('div');
-            taskEl.className = 'task-item';
-            const taskId = 'task-' + Date.now();
-            taskEl.id = taskId;
+            tasks.push(newTask);
+            saveAndRender();
 
-            // Getting correct labels based on current language
-            const impLabel = translations[currentLang].impText;
-            const urgLabel = translations[currentLang].urgText;
-
-            taskEl.innerHTML = `
-                <div class="task-details">
-                    <strong>${name}</strong>
-                    <span class="task-weight">${impLabel}: ${importance} | ${urgLabel}: ${urgency}</span>
-                </div>
-                <button class="delete-btn" onclick="deleteTask('${taskId}')">✕</button>
-            `;
-
-            document.getElementById(targetDiv).appendChild(taskEl);
-
-            // Reset Inputs
             document.getElementById('taskName').value = '';
             document.getElementById('importance').value = 5;
-            document.getElementById('urgency').value = 5;
             updateValue('impValue', 5);
-            updateValue('urgValue', 5);
         }
 
         function deleteTask(id) {
-            document.getElementById(id).remove();
+            tasks = tasks.filter(task => task.id !== id);
+            saveAndRender();
         }
+
+        // إنشاء ملف التقويم وإضافته للآيفون
+        function addToCalendar(taskName, dueDateStr) {
+            const dateParts = dueDateStr.split('-');
+            const icsDate = dateParts[0] + dateParts[1] + dateParts[2];
+            
+            const icsContent = [
+                "BEGIN:VCALENDAR",
+                "VERSION:2.0",
+                "PRODID:-//Matrix App//EN",
+                "BEGIN:VEVENT",
+                `DTSTART;VALUE=DATE:${icsDate}`,
+                `SUMMARY:${taskName}`,
+                "DESCRIPTION:Added from Task Matrix App",
+                "END:VEVENT",
+                "END:VCALENDAR"
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', taskName + '.ics');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('matrixTasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function renderTasks() {
+            document.getElementById('tasks-q1').innerHTML = '';
+            document.getElementById('tasks-q2').innerHTML = '';
+            document.getElementById('tasks-q3').innerHTML = '';
+            document.getElementById('tasks-q4').innerHTML = '';
+
+            const impLabel = translations[currentLang].impText;
+            const daysLabel = translations[currentLang].daysLeftText;
+            const todayTxt = translations[currentLang].todayText;
+            const overdueTxt = translations[currentLang].overdueText;
+
+            tasks.forEach(task => {
+                const timeData = calculateUrgency(task.dueDate);
+                const urgencyScore = timeData.score;
+                
+                let daysText = timeData.daysLeft < 0 ? overdueTxt : (timeData.daysLeft === 0 ? todayTxt : timeData.daysLeft);
+                
+                let targetDiv = '';
+                if (task.importance >= 6 && urgencyScore >= 6) targetDiv = 'tasks-q1';
+                else if (task.importance >= 6 && urgencyScore < 6) targetDiv = 'tasks-q2';
+                else if (task.importance < 6 && urgencyScore >= 6) targetDiv = 'tasks-q3';
+                else targetDiv = 'tasks-q4';
+
+                let daysColor = timeData.daysLeft <= 3 ? '#e74c3c' : (timeData.daysLeft <= 7 ? '#f39c12' : '#27ae60');
+
+                const taskEl = document.createElement('div');
+                taskEl.className = 'task-item';
+                taskEl.id = task.id;
+                
+                // إضافة اسم المهمة بأمان لتجنب مشاكل الأقواس في دالة التقويم
+                const safeName = task.name.replace(/'/g, "\\'"); 
+
+                taskEl.innerHTML = `
+                    <div class="task-details">
+                        <div class="task-name">${task.name}</div>
+                        <div class="task-weight">
+                            ${impLabel}: ${task.importance}/10 <br>
+                            <span class="urgency-badge" style="color: ${daysColor}">🗓️ ${daysText} ${typeof daysText === 'number' ? daysLabel : ''}</span>
+                        </div>
+                    </div>
+                    <div class="action-btns">
+                        <button class="icon-btn cal-btn" onclick="addToCalendar('${safeName}', '${task.dueDate}')" title="Add to Calendar">📅</button>
+                        <button class="icon-btn del-btn" onclick="deleteTask('${task.id}')" title="Delete Task">✕</button>
+                    </div>
+                `;
+                document.getElementById(targetDiv).appendChild(taskEl);
+            });
+        }
+
+        renderTasks();
     </script>
 </body>
 </html>
