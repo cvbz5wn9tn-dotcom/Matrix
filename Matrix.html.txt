@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urgency & Importance Matrix</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            color: #333; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 1000px; 
+            margin: auto; 
+        }
+        h1 { 
+            text-align: center; 
+            color: #2c3e50; 
+        }
+        .form-card { 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            margin-bottom: 20px; 
+            display: flex; 
+            gap: 15px; 
+            align-items: flex-end; 
+            flex-wrap: wrap; 
+        }
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+            flex: 1; 
+            min-width: 150px; 
+        }
+        label { 
+            font-weight: bold; 
+            margin-bottom: 5px; 
+            font-size: 0.9em; 
+        }
+        input { 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+        }
+        button { 
+            padding: 10px 20px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: background 0.3s; 
+        }
+        button:hover { 
+            background-color: #0056b3; 
+        }
+        
+        .matrix { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+        }
+        .quadrant { 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            min-height: 250px; 
+        }
+        .quadrant h2 { 
+            font-size: 1.1em; 
+            margin-top: 0; 
+            padding-bottom: 10px; 
+            border-bottom: 2px solid #eee; 
+        }
+        
+        /* Quadrant Color Indicators */
+        #q1 { border-top: 5px solid #e74c3c; } /* Do First - Red */
+        #q2 { border-top: 5px solid #3498db; } /* Schedule - Blue */
+        #q3 { border-top: 5px solid #f39c12; } /* Delegate - Orange */
+        #q4 { border-top: 5px solid #95a5a6; } /* Eliminate - Gray */
+
+        .task-item { 
+            background: #f9f9f9; 
+            border-left: 4px solid #333; 
+            padding: 10px; 
+            margin-bottom: 10px; 
+            border-radius: 4px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .task-details { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .task-weight { 
+            font-size: 0.8em; 
+            color: #666; 
+            margin-top: 4px; 
+        }
+        .delete-btn { 
+            background: #e74c3c; 
+            padding: 5px 10px; 
+            font-size: 0.8em; 
+        }
+        .delete-btn:hover { 
+            background: #c0392b; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Task Prioritization Matrix</h1>
+        
+        <div class="form-card">
+            <div class="form-group">
+                <label for="taskName">Task Description</label>
+                <input type="text" id="taskName" placeholder="E.g., Finalize load factor management protocol...">
+            </div>
+            <div class="form-group">
+                <label for="importance">Importance (1-10)</label>
+                <input type="number" id="importance" min="1" max="10" value="5">
+            </div>
+            <div class="form-group">
+                <label for="urgency">Urgency (1-10)</label>
+                <input type="number" id="urgency" min="1" max="10" value="5">
+            </div>
+            <button onclick="addTask()">Add Task</button>
+        </div>
+
+        <div class="matrix">
+            <div class="quadrant" id="q1">
+                <h2>Do First (Urgent & Important)</h2>
+                <div id="tasks-q1"></div>
+            </div>
+            <div class="quadrant" id="q2">
+                <h2>Schedule (Important, Not Urgent)</h2>
+                <div id="tasks-q2"></div>
+            </div>
+            <div class="quadrant" id="q3">
+                <h2>Delegate (Urgent, Not Important)</h2>
+                <div id="tasks-q3"></div>
+            </div>
+            <div class="quadrant" id="q4">
+                <h2>Eliminate (Neither)</h2>
+                <div id="tasks-q4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addTask() {
+            const name = document.getElementById('taskName').value;
+            const importance = parseInt(document.getElementById('importance').value);
+            const urgency = parseInt(document.getElementById('urgency').value);
+
+            if (!name) {
+                alert("Please enter a task description.");
+                return;
+            }
+
+            // Determine Quadrant based on weights (Threshold is 6)
+            let targetDiv = '';
+            if (importance >= 6 && urgency >= 6) {
+                targetDiv = 'tasks-q1'; // Q1: Do First
+            } else if (importance >= 6 && urgency < 6) {
+                targetDiv = 'tasks-q2'; // Q2: Schedule
+            } else if (importance < 6 && urgency >= 6) {
+                targetDiv = 'tasks-q3'; // Q3: Delegate
+            } else {
+                targetDiv = 'tasks-q4'; // Q4: Eliminate
+            }
+
+            // Create Task Element
+            const taskEl = document.createElement('div');
+            taskEl.className = 'task-item';
+            
+            // Generate unique ID for deletion
+            const taskId = 'task-' + Date.now();
+            taskEl.id = taskId;
+
+            // Set the task's inner HTML
+            taskEl.innerHTML = `
+                <div class="task-details">
+                    <strong>${name}</strong>
+                    <span class="task-weight">Importance: ${importance}/10 | Urgency: ${urgency}/10</span>
+                </div>
+                <button class="delete-btn" onclick="deleteTask('${taskId}')">X</button>
+            `;
+
+            // Append task to the calculated quadrant
+            document.getElementById(targetDiv).appendChild(taskEl);
+
+            // Clear input for the next task
+            document.getElementById('taskName').value = '';
+            document.getElementById('taskName').focus();
+        }
+
+        function deleteTask(id) {
+            document.getElementById(id).remove();
+        }
+    </script>
+</body>
+</html>
